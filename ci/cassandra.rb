@@ -25,7 +25,8 @@ namespace :ci do
     end
 
     task :before_script => ['ci:common:before_script'] do
-      sh %(#{cass_rootdir}/bin/cassandra)
+      sh %(#{cass_rootdir}/bin/cassandra -p $VOLATILE_DIR/cassandra.pid\
+           > /dev/null)
       # Wait for cassandra to init
       sleep_for 10
     end
@@ -37,12 +38,14 @@ namespace :ci do
       Rake::Task['ci:common:run_tests'].invoke(this_provides)
     end
 
-    task :before_cache => ['ci:common:before_cache']
+    task :before_cache => :cleanup
 
     task :cache => ['ci:common:cache']
 
     task cleanup: ['ci:common:cleanup'] do
-      # FIXME: stop cass
+      sh %(kill `cat $VOLATILE_DIR/cassandra.pid`)
+      sleep_for 3
+      sh %(rm -rf #{cass_rootdir}/data)
     end
 
     task :execute do
