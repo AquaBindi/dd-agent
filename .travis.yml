@@ -11,6 +11,8 @@ python:
   - "2.7"
 
 cache:
+  debug: true
+  edge: true
   directories:
     - $HOME/virtualenv/python2.6.9/lib/python2.6/site-packages
     - $HOME/virtualenv/python2.6.9/bin
